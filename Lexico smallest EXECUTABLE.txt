@@ -1,0 +1,50 @@
+Lexico smallest EXECUTABLE
+
+import java.util.*;
+class lab2 
+{
+	static int p[];
+	public static String smallestEquivalentString(String s1, String s2, String s3)
+	{
+		p=new int[26];
+        for(int i=0;i<26;i++)
+        {
+            p[i]=i;
+        }
+        for(int i = 0; i < s1.length(); i++) 
+		{
+            int a=s1.charAt(i)-'a';
+            int b=s2.charAt(i)-'a';
+            int p1=find(a);
+            int p2=find(b);
+            if(p1<p2)
+              p[p2]=p1;
+            else
+              p[p1]=p2;
+        }
+		StringBuilder sb = new StringBuilder();
+        for(int i=0;i<s3.length();i++)
+        {
+            int ch=s3.charAt(i)-'a';
+            sb.append((char)(find(ch)+'a'));
+        }
+        return sb.toString();
+    }
+    
+    static int find(int i) {
+        if (p[i] != i) {
+            p[i] = find(p[i]);  // Path compression
+        }
+        return p[i];
+    }
+
+	public static void main(String args[])
+	{
+		Scanner sc=new Scanner(System.in);
+		String A=sc.next();
+		String B=sc.next();
+		String T=sc.next();
+		System.out.println(smallestEquivalentString(A,B,T));
+        sc.close();
+	}
+}

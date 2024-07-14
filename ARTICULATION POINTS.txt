@@ -1,0 +1,92 @@
+ARTICULATION POINTS EXECUTABLE 
+
+import java.util.*;
+
+class lab1g {
+    int v;
+    int time;
+    static final int NIL = -1;
+    int adj[][];
+
+    lab1g(int v) {
+        this.v = v;
+        adj = new int[v + 1][v + 1];
+    }
+
+    public void addEdge(int i, int j) {
+        adj[i][j] = 1;
+        adj[j][i] = 1;
+    }
+
+    public void AP() {
+        boolean[] vis = new boolean[v + 1];
+        int[] disc = new int[v + 1];
+        int[] low = new int[v + 1];
+        int[] parent = new int[v + 1];
+        boolean[] ap = new boolean[v + 1];
+
+        for (int i = 1; i <= v; i++) {
+            parent[i] = NIL;
+            vis[i] = false;
+            ap[i] = false;
+        }
+
+        for (int i = 1; i <= v; i++) {
+            if (!vis[i]) {
+                apSolution(i, vis, disc, low, parent, ap);
+            }
+        }
+
+        System.out.println("Articulation points are:");
+        for (int i = 1; i <= v; i++) {
+            if (ap[i]) {
+                System.out.print(i + " ");
+            }
+        }
+        System.out.println(); // Print a new line after printing articulation points
+    }
+
+    public void apSolution(int u, boolean[] vis, int[] disc, int[] low, int[] parent, boolean[] ap) {
+        int children = 0;
+        disc[u] = low[u] = (++time);
+        vis[u] = true;
+
+        for (int w = 1; w <= v; w++) {
+            if (adj[u][w] == 1) {
+                if (!vis[w]) {
+                    children++;
+                    parent[w] = u;
+                    apSolution(w, vis, disc, low, parent, ap);
+                    low[u] = Math.min(low[u], low[w]);
+
+                    // u is an articulation point if it's root and has more than one child
+                    if (parent[u] == NIL && children > 1) {
+                        ap[u] = true;
+                    }
+
+                    // u is an articulation point if it's not root and low value of one of its child is more than discovery time of u
+                    if (parent[u] != NIL && low[w] >= disc[u]) {
+                        ap[u] = true;
+                    }
+                } else if (w != parent[u]) {
+                    // Update low value of u for parent function calls.
+                    low[u] = Math.min(low[u], disc[w]);
+                }
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        int v = s.nextInt();
+        int e = s.nextInt();
+        lab1g obj = new lab1g(v);
+        for (int i = 1; i <= e; i++) {
+            int v1 = s.nextInt();
+            int v2 = s.nextInt();
+            obj.addEdge(v1, v2);
+        }
+        obj.AP();
+        s.close();
+    }
+}

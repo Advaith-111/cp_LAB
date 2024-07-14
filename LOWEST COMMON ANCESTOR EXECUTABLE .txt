@@ -1,0 +1,96 @@
+LOWEST COMMON ANCESTOR EXECUTABLE 
+
+import java.util.*;
+import java.util.LinkedList;
+
+class BinaryTreeNode {
+    int data;
+    BinaryTreeNode left, right;
+
+    BinaryTreeNode(int data) {
+        this.data = data;
+        left = null;
+        right = null;
+    }
+}
+
+class lab1j {
+    static int[] depth;
+    static int[] parent;
+    static boolean[] visited;
+    static BinaryTreeNode root;
+
+    static void insert(BinaryTreeNode tempNode, int key) {
+        if (tempNode == null) {
+            root = new BinaryTreeNode(key);
+            return;
+        }
+        Queue<BinaryTreeNode> q = new LinkedList<>();
+        q.add(tempNode);
+        while (!q.isEmpty()) {
+            tempNode = q.poll();
+            if (tempNode.left == null) {
+                tempNode.left = new BinaryTreeNode(key);
+                break;
+            } else {
+                q.add(tempNode.left);
+            }
+            if (tempNode.right == null) {
+                tempNode.right = new BinaryTreeNode(key);
+                break;
+            } else {
+                q.add(tempNode.right);
+            }
+        }
+    }
+
+    static void dfs(BinaryTreeNode root) {
+        if (root == null) return;
+        visited[root.data] = true;
+        if (root.left != null) {
+            depth[root.left.data] = depth[root.data] + 1;
+            parent[root.left.data] = root.data;
+            dfs(root.left);
+        }
+        if (root.right != null) {
+            depth[root.right.data] = depth[root.data] + 1;
+            parent[root.right.data] = root.data;
+            dfs(root.right);
+        }
+    }
+
+    static BinaryTreeNode LCA(BinaryTreeNode u, BinaryTreeNode v) {
+        while (depth[u.data] != depth[v.data]) {
+            if (depth[u.data] > depth[v.data]) {
+                u = new BinaryTreeNode(parent[u.data]);
+            } else {
+                v = new BinaryTreeNode(parent[v.data]);
+            }
+        }
+        while (u.data != v.data) {
+            u = new BinaryTreeNode(parent[u.data]);
+            v = new BinaryTreeNode(parent[v.data]);
+        }
+        return u;
+    }
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        String[] str = s.nextLine().split(" ");
+        root = new BinaryTreeNode(Integer.parseInt(str[0]));
+        for (int i = 1; i < str.length; i++) {
+            insert(root, Integer.parseInt(str[i]));
+        }
+        int len = str.length;
+        depth = new int[len + 1];
+        parent = new int[len + 1];
+        visited = new boolean[len + 1];
+        dfs(root);
+        BinaryTreeNode u = new BinaryTreeNode(s.nextInt());
+        BinaryTreeNode v = new BinaryTreeNode(s.nextInt());
+        BinaryTreeNode res = LCA(u, v);
+        System.out.println("Lowest common ancestor = " + res.data);
+        s.close();
+    }
+
+}

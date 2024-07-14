@@ -1,0 +1,58 @@
+import java.util.*;
+
+class fenwickTree {
+    public static int[] createTree(int[] a) {
+        int[] bit = new int[a.length + 1];
+        for (int i = 1; i <= a.length; i++) {
+            updateTree(bit, a[i - 1], i);
+        }
+        return bit;
+    }
+
+    public static void updateTree(int[] bit, int val, int index) {
+        while (index < bit.length) {
+            bit[index] += val;
+            index = getNext(index);
+        }
+    }
+
+    public static int getNext(int index) {
+        return index + (index & -index);
+    }
+
+    static int getSum(int[] bit, int index) {
+        index += 1;
+        int sum = 0;
+        while (index > 0) {
+            sum += bit[index];
+            index = getParent(index);
+        }
+        return sum;
+    }
+
+    static int getParent(int index) {
+        return index - (index & -index);
+    }
+
+    static int sumRange(int[] bit, int sp, int ep) {
+        return getSum(bit, ep) - getSum(bit, sp - 1);
+    }
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        System.out.println("enter size");
+        int n = s.nextInt();
+        int[] a = new int[n];
+        System.out.println("enter array values: ");
+        for (int i = 0; i < n; i++) {
+            a[i] = s.nextInt();
+        }
+        int[] bit = createTree(a);
+        System.out.println("Sum of range 4 to 9 is: " + sumRange(bit, 4, 9));
+        System.out.println("Enter value to update at 4th position = ");
+        int val = s.nextInt();
+        updateTree(bit, val - a[4], 5);
+        System.out.println("Sum of range 4 to 9 after updation is: " + sumRange(bit, 4, 9));
+        s.close();
+    }
+}

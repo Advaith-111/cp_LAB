@@ -1,0 +1,56 @@
+TOPOLOGICAL EXECUTABLE
+
+import java.util.*;
+
+class Tsort{
+    int v;
+    int adj[][];
+    Stack <Integer> stk;
+    Tsort(int v){
+        this.v=v;
+        adj=new int[v+1][v+1];
+        stk=new Stack<>();
+    }
+    void addedge(int i,int j){
+        adj[i][j]=1;
+    }
+    void topsort(){
+        boolean visited[]=new boolean[v+1];
+        for(int i=1;i<=v;i++){
+            visited[i]=false;
+
+        }
+        for(int i=1;i<=v;i++){
+            if(!visited[i]){
+                tdfs(i,visited);
+            }
+        }
+        System.out.println("TOp is");
+        while(!stk.isEmpty()){
+            System.out.print(stk.pop()+" ");
+        }
+    }
+    void tdfs(int u,boolean visited[]){
+        visited[u]=true;
+        for(int w=1;w<=v;w++){
+            if(adj[u][w] == 1 && !visited[w]){
+                tdfs(w,visited);
+            }
+        }
+        stk.push(u);
+    }
+    public static void main(String[] args){
+        Scanner sc=new Scanner(System.in);
+        int v=sc.nextInt();
+        
+        int e=sc.nextInt();
+        Tsort g=new Tsort(v);
+        for(int i=1;i<=e;i++){
+            int v1=sc.nextInt();
+            int v2=sc.nextInt();
+            g.addedge(v1,v2);
+        }
+        g.topsort();
+        sc.close();
+    }
+}

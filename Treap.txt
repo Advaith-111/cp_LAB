@@ -1,81 +1,71 @@
 import java.util.*;
 
-class tnode{
-    
-    tnode left,right;
-    int key, priority;
-    tnode(int key){
-        this.key=key;
-        priority=new Random().nextInt(1000);
-        left=null;
-        right=null;
+public class KthLargest {
+    static int K;
 
+    public static Tnode LeftRotation(Tnode root) {
+        Tnode r = root.right;
+        Tnode x = root.right.left;
+        r.left = root;
+        root.right = x;
+        return r;
     }
-    static int k;
-    static tnode create(tnode root, int key){
-        if(root==null){
-            return new tnode(key);
 
-        }
-        if(key < root.key){
-            root.left=create(root.left,key);
-            if(root.left!=null && root.left.priority > root.priority){
-                root=rightrotate(root);
+    public static Tnode RightRotation(Tnode root) {
+        Tnode l = root.left;
+        Tnode x = root.left.right;
+        l.right = root;
+        root.left = x;
+        return l;
+    }
+
+    public static Tnode InsertNode(Tnode root, int key) {
+        if (root == null)
+            return new Tnode(key);
+        if (key < root.key) {
+            root.left = InsertNode(root.left, key);
+            if (root.left != null && root.left.priority > root.priority) {
+                root = RightRotation(root);
             }
-        }
-        else{
-            root.right=create(root.right,key);
-            if(root.right!=null && root.right.priority > root.priority){
-                root=leftrotate(root);
+        } else {
+            root.right = InsertNode(root.right, key);
+            if (root.right != null && root.right.priority > root.priority) {
+                root = LeftRotation(root);
             }
         }
         return root;
     }
-    static tnode leftrotate(tnode root){
-        tnode r=root.right;
-        tnode x=root.right.left;
-        r.left=root;
-        root.right=x;
-        return r;
-    }
-    static tnode rightrotate(tnode root){
-        tnode l=root.left;
-        tnode p=root.left.right;
-        l.right=root;
-        root.left=p;
-        return l;
-    }
-    static void inorder(tnode root){
-        if(root==null){
-            return;
-        }
-        if(root!=null){
-            inorder(root.left);
-            k--;
-            if(k==0){
-            System.out.println(root.key+ " " +root.priority);
+
+    public static void Inorder(Tnode root) {
+        if (root != null) {
+            Inorder(root.left);
+            K--;
+            if (K == 0) {
+                System.out.println(root.key + " " + root.priority);
             }
-            inorder(root.right);
+            Inorder(root.right);
         }
     }
-    public static void main(String[] args){
-        Scanner sc=new Scanner(System.in);
-        int n=sc.nextInt();
-        int p=sc.nextInt();
-        k=p-n+1;
-        int arr[]=new int[n];
-        for(int i=0;i<n;i++){
-            arr[i]=sc.nextInt();
-        }
-        // tnode t=new tnode();
-        tnode root=null;
-        for(int a:arr){
-            root=create(root,a);
-        }
-        inorder(root);
+
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        System.out.println("Enter no of elements: ");
+        int n = s.nextInt();
         
-
-
-
+        int[] a = new int[n];
+        System.out.println("enter elements: ");
+        for (int i = 0; i < n; i++) {
+            a[i] = s.nextInt();
+        }
+        System.out.println("Enter position: ");
+        int p = s.nextInt();
+        K = n - p + 1;
+        Tnode root = null;
+        for (int i : a) {
+            root = InsertNode(root, i);
+        }
+        Inorder(root);
+        s.close();
     }
+
 }
